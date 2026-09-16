@@ -4,6 +4,8 @@ const languageButtons = document.querySelectorAll("[data-language]");
 const translatedElements = document.querySelectorAll("[data-id][data-en]");
 const salesFacts = document.querySelectorAll(".sales-fact");
 const rotatingCapability = document.getElementById("rotating-capability");
+const menuToggle = document.querySelector(".menu-toggle");
+const primaryNavigation = document.getElementById("primary-navigation");
 let currentLanguage = "id";
 let capabilityIndex = 0;
 const capabilities = {
@@ -51,12 +53,41 @@ function setLanguage(language) {
   });
 
   rotatingCapability.textContent = capabilities[currentLanguage][capabilityIndex];
+  const menuOpen = menuToggle.getAttribute("aria-expanded") === "true";
+  menuToggle.setAttribute("aria-label", menuOpen
+    ? (isEnglish ? "Close menu" : "Tutup menu")
+    : menuToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
   localStorage.setItem("portfolio-language", language);
 }
 
 languageButtons.forEach((button) => {
   button.addEventListener("click", () => setLanguage(button.dataset.language));
+});
+
+function setMenu(open) {
+  document.body.classList.toggle("menu-open", open);
+  menuToggle.setAttribute("aria-expanded", String(open));
+  const labelKey = currentLanguage === "en" ? "En" : "Id";
+  menuToggle.setAttribute("aria-label", open
+    ? (currentLanguage === "en" ? "Close menu" : "Tutup menu")
+    : menuToggle.dataset[`label${labelKey}`]);
+}
+
+menuToggle.addEventListener("click", () => {
+  setMenu(menuToggle.getAttribute("aria-expanded") !== "true");
+});
+
+primaryNavigation.querySelectorAll("a").forEach((link) => {
+  link.addEventListener("click", () => setMenu(false));
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setMenu(false);
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 640) setMenu(false);
 });
 
 const factObserver = new IntersectionObserver((entries, observer) => {
@@ -67,7 +98,7 @@ const factObserver = new IntersectionObserver((entries, observer) => {
     animateCount(counter, Number(entry.target.dataset.count));
     observer.unobserve(entry.target);
   });
-}, { threshold: 0.6 });
+}, { threshold: 0.2 });
 
 salesFacts.forEach((card) => factObserver.observe(card));
 

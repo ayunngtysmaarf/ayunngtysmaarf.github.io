@@ -18,12 +18,15 @@
 
   <header class="site-header">
     <a class="monogram" href="#top" aria-label="Ayuningtyas Maarif, home">AM</a>
-    <nav aria-label="Primary navigation">
+    <nav id="primary-navigation" aria-label="Primary navigation">
       <a href="#profile" data-id="Profil" data-en="Profile">Profil</a>
       <a href="#experience" data-id="Pengalaman" data-en="Experience">Pengalaman</a>
       <a href="#work" data-id="Karya" data-en="Work">Karya</a>
       <a href="#contact" data-id="Kontak" data-en="Contact">Kontak</a>
     </nav>
+    <button class="menu-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false" aria-label="Buka menu" data-label-id="Buka menu" data-label-en="Open menu">
+      <span></span><span></span>
+    </button>
     <div class="language-switch" role="group" aria-label="Language">
       <button type="button" data-language="id" aria-pressed="true">ID</button>
       <span aria-hidden="true">/</span>
@@ -58,7 +61,11 @@
           <p data-id="Selama lebih dari lima tahun, saya menangani pekerjaan dari ujung ke ujung: memahami kebutuhan pelanggan, mengatur stok dan data, melatih tim, menyelesaikan keluhan, hingga menerjemahkan temuan menjadi tindakan yang jelas." data-en="For more than five years, I have handled work end to end: understanding customer needs, organizing stock and data, training teams, resolving complaints, and turning findings into clear action.">Selama lebih dari lima tahun, saya menangani pekerjaan dari ujung ke ujung: memahami kebutuhan pelanggan, mengatur stok dan data, melatih tim, menyelesaikan keluhan, hingga menerjemahkan temuan menjadi tindakan yang jelas.</p>
         </div>
         <div class="facts">
-          <div><strong>3.89</strong><span data-id="Magister Ilmu Ekonomi · IPK" data-en="Master of Economics · GPA">Magister Ilmu Ekonomi · IPK</span></div>
+          <div class="degree-fact">
+            <strong>3.89</strong>
+            <span data-id="M.E. · Magister Ilmu Ekonomi" data-en="M.E. · Master of Economics">M.E. · Magister Ilmu Ekonomi</span>
+            <small data-id="IPK / 4.00" data-en="GPA / 4.00">IPK / 4.00</small>
+          </div>
           <div class="sales-fact" data-count="250">
             <strong><span class="counter">250</span><sup>+</sup></strong>
             <span data-id="MacBook terjual/bulan" data-en="MacBooks sold/month">MacBook terjual/bulan</span>
