@@ -170,3 +170,50 @@ const savedLanguage = localStorage.getItem("portfolio-language");
 if (savedLanguage === "en") setLanguage("en");
 
 document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ---------- Easter eggs ---------- */
+const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// 1. Console greeting for the curious devs / recruiters
+console.log(
+  "%cAyuningtyas Maarif%c\nLiked the code? Let's talk → ayuningtyas.maarif99@gmail.com\nPsst… try the Konami code, or triple-click my name.",
+  "font-size:20px;font-weight:700;color:#a8432e",
+  "font-size:12px;color:#69665f"
+);
+
+// 2. Confetti burst (no deps)
+function confetti() {
+  if (reduceMotion()) return;
+  const colors = ["#a8432e", "#ce1126", "#012169", "#20201d", "#e7dfd2"];
+  for (let i = 0; i < 80; i++) {
+    const p = document.createElement("span");
+    p.className = "confetti";
+    p.style.left = Math.random() * 100 + "vw";
+    p.style.background = colors[i % colors.length];
+    p.style.animationDelay = Math.random() * 0.3 + "s";
+    p.style.animationDuration = 1.6 + Math.random() * 1.4 + "s";
+    document.body.appendChild(p);
+    p.addEventListener("animationend", () => p.remove());
+  }
+}
+
+// 3. Konami code → confetti + party class
+const konami = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let konamiPos = 0;
+document.addEventListener("keydown", (event) => {
+  konamiPos = event.key === konami[konamiPos] ? konamiPos + 1 : (event.key === konami[0] ? 1 : 0);
+  if (konamiPos === konami.length) {
+    konamiPos = 0;
+    confetti();
+    document.body.classList.toggle("party");
+  }
+});
+
+// 4. Triple-click the name → confetti
+let nameClicks = 0, nameTimer;
+document.getElementById("hero-title").addEventListener("click", () => {
+  nameClicks++;
+  clearTimeout(nameTimer);
+  nameTimer = setTimeout(() => (nameClicks = 0), 600);
+  if (nameClicks >= 3) { nameClicks = 0; confetti(); }
+});

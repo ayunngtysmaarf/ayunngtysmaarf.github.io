@@ -513,3 +513,25 @@ footer p { margin: 0; }
 
   * { box-shadow: none !important; }
 }
+
+/* ---------- Easter eggs ---------- */
+.confetti {
+  position: fixed;
+  top: -5vh;
+  width: 9px;
+  height: 9px;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+body.party { animation: party-hue 4s linear infinite; }
+@keyframes party-hue { to { filter: hue-rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .confetti { display: none; }
+  body.party { animation: none; }
+}
