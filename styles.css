@@ -92,9 +92,9 @@ nav a::after {
 nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); transform-origin: left; }
 .menu-toggle { display: none; width: 2.5rem; height: 2.5rem; padding: .65rem; border: 0; background: transparent; cursor: pointer; }
 .menu-toggle span { display: block; width: 100%; height: 1px; margin: .32rem 0; background: var(--ink); transition: transform .3s ease; }
-.language-switch { display: flex; justify-content: flex-end; gap: .45rem; }
-.language-switch button { padding: 0; border: 0; background: none; cursor: pointer; opacity: .35; }
-.language-switch button[aria-pressed="true"] { opacity: 1; }
+.language-switch { display: flex; justify-content: flex-end; }
+.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 1; font-size: 1.3rem; }
+.language-flag .flag { display: block; }
 
 .hero {
   position: relative;
@@ -426,16 +426,68 @@ footer p { margin: 0; }
 }
 
 @media print {
-  .site-header, .portrait-placeholder, .hero-side-note, .hero-actions, .contact, footer { display: none; }
+  @page { size: A4; margin: 16mm 14mm; }
+  .site-header, .skip-link, .hero-side-note, .hero-actions, .contact, footer,
+  body::before { display: none; }
   body { color: #000; background: #fff; font-size: 11pt; }
-  .hero { display: block; min-height: auto; padding: 2rem 0; }
+
+  /* Scroll-triggered reveal animations never fire for off-screen print
+     rendering — force everything visible instead of staying opacity:0. */
+  .js [data-reveal],
+  .js .hero .eyebrow, .js .hero h1, .js .hero-intro, .js .hero-actions, .js .portrait-placeholder {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 11rem;
+    align-items: start;
+    gap: 1.5rem;
+    min-height: auto;
+    padding: 1rem 0 1.5rem;
+  }
   .hero::before { display: none; }
-  h1 { font-size: 48pt; }
-  .section { display: block; padding: 2rem 0; break-inside: avoid; }
-  .section-label { margin-bottom: 1rem; }
+  .hero-copy { align-self: start; }
+  .portrait-placeholder {
+    width: 11rem;
+    max-height: 13rem;
+    align-self: start;
+    aspect-ratio: 3 / 4;
+  }
+  h1 { font-size: 40pt; }
+  .section { display: block; padding: 1.5rem 0; break-inside: auto; }
+  .section-label { position: static; margin-bottom: 1rem; }
+  .experience-item, .expertise-list > div, .work-list article,
+  .education-column article, .certifications li, .facts,
+  .featured-work, .featured-research-link {
+    break-inside: avoid;
+  }
+
+  /* Page 1 = hero + profile only; every later section starts fresh. */
+  .experience, .expertise, .work, .education, .community-banner {
+    break-before: page;
+  }
   .experience { color: #000; background: #fff; }
   .experience .section-heading-row > p, .experience-item > p, .organization { color: #333; }
+  .experience-item, .earlier-work { border-color: #ccc; }
   .status { color: #333; border-color: #333; }
+  .status.primary { color: #000; border-color: #000; }
   .featured-work { min-height: auto; color: #000; background: #eee; }
   .community-banner { color: #000; background: #eee; }
+
+  /* Details/summary open by default in DOM only when toggled by JS;
+     for print we want the collapsed "earlier work" list expanded. */
+  .earlier-work { display: block !important; }
+  .earlier-work summary { display: none; }
+
+  a[href^="http"]::after, a[href^="mailto"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    font-weight: 400;
+  }
+
+  * { box-shadow: none !important; }
 }
