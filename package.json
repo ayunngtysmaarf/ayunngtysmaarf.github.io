@@ -1,0 +1,25 @@
+{
+  "name": "ayunngtysmaarf.github.io",
+  "version": "1.0.0",
+  "description": "A bilingual, responsive personal portfolio for Ayuningtyas Maarif, built as a lightweight static website and deployed through GitHub Pages.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pdf": "node scripts/generate-pdf.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayunngtysmaarf/ayunngtysmaarf.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ayunngtysmaarf/ayunngtysmaarf.github.io/issues"
+  },
+  "homepage": "https://github.com/ayunngtysmaarf/ayunngtysmaarf.github.io#readme",
+  "devDependencies": {
+    "puppeteer": "^25.11.0"
+  }
+}
