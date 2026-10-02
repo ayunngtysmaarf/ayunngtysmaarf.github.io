@@ -49,6 +49,9 @@ function setLanguage(language) {
     element.textContent = element.dataset[language];
   });
 
+  languageToggle.classList.remove("flipping");
+  void languageToggle.offsetWidth;
+  languageToggle.classList.add("flipping");
   languageToggle.querySelector(".flag").textContent = flags[language];
   languageToggle.setAttribute("aria-label", languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 

@@ -93,8 +93,13 @@ nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); transform
 .menu-toggle { display: none; width: 2.5rem; height: 2.5rem; padding: .65rem; border: 0; background: transparent; cursor: pointer; }
 .menu-toggle span { display: block; width: 100%; height: 1px; margin: .32rem 0; background: var(--ink); transition: transform .3s ease; }
 .language-switch { display: flex; justify-content: flex-end; }
-.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 1; font-size: 1.3rem; }
-.language-flag .flag { display: block; }
+.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 1; font-size: 1.3rem; transition: transform .2s ease; }
+.language-flag:hover { transform: scale(1.18) rotate(-6deg); }
+.language-flag:active { transform: scale(.92); }
+.language-flag .flag { display: block; transition: transform .35s ease; }
+.language-flag.flipping .flag { animation: flag-flip .35s ease; }
+@keyframes flag-flip { 50% { transform: rotateY(90deg) scale(.8); } }
+@media (prefers-reduced-motion: reduce) { .language-flag, .language-flag .flag { transition: none; } .language-flag.flipping .flag { animation: none; } }
 
 .hero {
   position: relative;
