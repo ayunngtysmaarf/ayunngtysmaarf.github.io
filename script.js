@@ -1,7 +1,7 @@
 document.documentElement.classList.add("js");
 
 const languageToggle = document.querySelector("[data-language-toggle]");
-const flags = { id: "🇮🇩", en: "🇬🇧" };
+const flags = { id: "assets/flag-id.svg", en: "assets/flag-gb.svg" };
 const translatedElements = document.querySelectorAll("[data-id][data-en]");
 const salesFacts = document.querySelectorAll(".sales-fact");
 const rotatingCapability = document.getElementById("rotating-capability");
@@ -52,7 +52,7 @@ function setLanguage(language) {
   languageToggle.classList.remove("flipping");
   void languageToggle.offsetWidth;
   languageToggle.classList.add("flipping");
-  languageToggle.querySelector(".flag").textContent = flags[language];
+  languageToggle.querySelector(".flag").src = flags[language];
   languageToggle.setAttribute("aria-label", languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
   rotatingCapability.textContent = capabilities[currentLanguage][capabilityIndex];

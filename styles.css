@@ -93,13 +93,30 @@ nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); transform
 .menu-toggle { display: none; width: 2.5rem; height: 2.5rem; padding: .65rem; border: 0; background: transparent; cursor: pointer; }
 .menu-toggle span { display: block; width: 100%; height: 1px; margin: .32rem 0; background: var(--ink); transition: transform .3s ease; }
 .language-switch { display: flex; justify-content: flex-end; }
-.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 1; font-size: 1.3rem; transition: transform .2s ease; }
+.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; transition: transform .2s ease; }
 .language-flag:hover { transform: scale(1.18) rotate(-6deg); }
 .language-flag:active { transform: scale(.92); }
-.language-flag .flag { display: block; transition: transform .35s ease; }
+.language-flag .flag { display: block; width: 24px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.08); transition: transform .35s ease; }
 .language-flag.flipping .flag { animation: flag-flip .35s ease; }
 @keyframes flag-flip { 50% { transform: rotateY(90deg) scale(.8); } }
-@media (prefers-reduced-motion: reduce) { .language-flag, .language-flag .flag { transition: none; } .language-flag.flipping .flag { animation: none; } }
+
+/* Site-wide micro-interactions */
+nav a, .text-link, .menu-toggle, summary, .research-link, .featured-research-link { transition: transform .2s ease, opacity .2s ease; }
+nav a:hover, .text-link:hover { transform: translateY(-2px); }
+.text-link:active { transform: translateY(0) scale(.97); }
+.sales-fact, .expertise-list > div, .work-list article, .featured-work, .experience-item { transition: transform .25s ease, box-shadow .25s ease; }
+.sales-fact:hover, .expertise-list > div:hover, .work-list article:hover, .featured-work:hover { transform: translateY(-4px); }
+summary:hover { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .language-flag, .language-flag .flag, nav a, .text-link, .menu-toggle, summary,
+  .research-link, .featured-research-link, .sales-fact, .expertise-list > div,
+  .work-list article, .featured-work, .experience-item { transition: none; }
+  .language-flag.flipping .flag { animation: none; }
+  .language-flag:hover, nav a:hover, .text-link:hover, .sales-fact:hover,
+  .expertise-list > div:hover, .work-list article:hover, .featured-work:hover,
+  summary:hover { transform: none; }
+}
 
 .hero {
   position: relative;
