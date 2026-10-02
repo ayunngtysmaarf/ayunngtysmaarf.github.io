@@ -1,6 +1,7 @@
 document.documentElement.classList.add("js");
 
-const languageButtons = document.querySelectorAll("[data-language]");
+const languageToggle = document.querySelector("[data-language-toggle]");
+const flags = { id: "🇮🇩", en: "🇬🇧" };
 const translatedElements = document.querySelectorAll("[data-id][data-en]");
 const salesFacts = document.querySelectorAll(".sales-fact");
 const rotatingCapability = document.getElementById("rotating-capability");
@@ -48,9 +49,8 @@ function setLanguage(language) {
     element.textContent = element.dataset[language];
   });
 
-  languageButtons.forEach((button) => {
-    button.setAttribute("aria-pressed", String(button.dataset.language === language));
-  });
+  languageToggle.querySelector(".flag").textContent = flags[language];
+  languageToggle.setAttribute("aria-label", languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
   rotatingCapability.textContent = capabilities[currentLanguage][capabilityIndex];
   const menuOpen = menuToggle.getAttribute("aria-expanded") === "true";
@@ -61,9 +61,7 @@ function setLanguage(language) {
   localStorage.setItem("portfolio-language", language);
 }
 
-languageButtons.forEach((button) => {
-  button.addEventListener("click", () => setLanguage(button.dataset.language));
-});
+languageToggle.addEventListener("click", () => setLanguage(currentLanguage === "id" ? "en" : "id"));
 
 function setMenu(open) {
   document.body.classList.toggle("menu-open", open);
