@@ -46,7 +46,8 @@ function setLanguage(language) {
     : "Ayuningtyas Maarif — Portofolio";
 
   translatedElements.forEach((element) => {
-    element.textContent = element.dataset[language];
+    const text = element.dataset[language];
+    element.textContent = pirateMode ? toPirate(text) : text;
   });
 
   languageToggle.classList.remove("flipping");
@@ -65,6 +66,35 @@ function setLanguage(language) {
 }
 
 languageToggle.addEventListener("click", () => setLanguage(currentLanguage === "id" ? "en" : "id"));
+
+// Easter egg: rapid-click the flag 5x → Pirate Speak (Minecraft-style)
+let pirateMode = false;
+const pirateWords = {
+  my: "me", "i'm": "I be", im: "I be", is: "be", are: "be", am: "be",
+  you: "ye", your: "yer", "you're": "ye be", for: "fer", of: "o'",
+  the: "th'", to: "t'", and: "n'", with: "wit'", friend: "matey",
+  friends: "mateys", hello: "ahoy", yes: "aye", money: "doubloons",
+  team: "crew", teams: "crews", work: "plunder", experience: "voyages"
+};
+function toPirate(text) {
+  return text.replace(/[A-Za-z']+/g, (w) => {
+    const hit = pirateWords[w.toLowerCase()];
+    if (!hit) return w;
+    return /^[A-Z]/.test(w) ? hit.charAt(0).toUpperCase() + hit.slice(1) : hit;
+  }).replace(/\.(\s|$)/g, ", arr!$1");
+}
+let flagClicks = 0, flagTimer;
+languageToggle.addEventListener("click", () => {
+  flagClicks++;
+  clearTimeout(flagTimer);
+  flagTimer = setTimeout(() => (flagClicks = 0), 800);
+  if (flagClicks >= 5) {
+    flagClicks = 0;
+    pirateMode = !pirateMode;
+    confetti();
+    setLanguage(currentLanguage);
+  }
+});
 
 function setMenu(open) {
   document.body.classList.toggle("menu-open", open);
