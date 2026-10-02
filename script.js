@@ -209,11 +209,26 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// 4. Triple-click the name → confetti
-let nameClicks = 0, nameTimer;
-document.getElementById("hero-title").addEventListener("click", () => {
-  nameClicks++;
-  clearTimeout(nameTimer);
-  nameTimer = setTimeout(() => (nameClicks = 0), 600);
-  if (nameClicks >= 3) { nameClicks = 0; confetti(); }
+// 4. Triple-click helper
+function onTripleClick(element, callback) {
+  let clicks = 0, timer;
+  element.addEventListener("click", () => {
+    clicks++;
+    clearTimeout(timer);
+    timer = setTimeout(() => (clicks = 0), 600);
+    if (clicks >= 3) { clicks = 0; callback(); }
+  });
+}
+
+// Triple-click the name → confetti
+onTripleClick(document.getElementById("hero-title"), confetti);
+
+// Triple-click the portrait → spin + confetti
+const portrait = document.querySelector(".portrait-placeholder");
+onTripleClick(portrait, () => {
+  confetti();
+  if (reduceMotion()) return;
+  portrait.classList.remove("spin");
+  void portrait.offsetWidth;
+  portrait.classList.add("spin");
 });

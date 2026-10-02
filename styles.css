@@ -531,7 +531,9 @@ footer p { margin: 0; }
 }
 body.party { animation: party-hue 4s linear infinite; }
 @keyframes party-hue { to { filter: hue-rotate(360deg); } }
+.portrait-placeholder.spin { animation: portrait-spin .8s cubic-bezier(.4,0,.2,1); }
+@keyframes portrait-spin { to { transform: rotate(360deg) scale(1); } 50% { transform: rotate(180deg) scale(.88); } }
 @media (prefers-reduced-motion: reduce) {
   .confetti { display: none; }
-  body.party { animation: none; }
+  body.party, .portrait-placeholder.spin { animation: none; }
 }
