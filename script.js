@@ -1,7 +1,8 @@
 document.documentElement.classList.add("js");
 
 const languageToggle = document.querySelector("[data-language-toggle]");
-const flags = { id: "assets/flag-id.svg", en: "assets/flag-gb.svg" };
+const flags = { id: "assets/flag-id.svg", en: "assets/flag-gb.svg", pirate: "assets/flag-pirate.svg" };
+let cycle = ["id", "en"];
 const translatedElements = document.querySelectorAll("[data-id][data-en]");
 const salesFacts = document.querySelectorAll(".sales-fact");
 const rotatingCapability = document.getElementById("rotating-capability");
@@ -36,27 +37,36 @@ function animateCount(element, target) {
   requestAnimationFrame(update);
 }
 
-function setLanguage(language) {
-  const isEnglish = language === "en";
-  currentLanguage = language;
+function caps() {
+  const base = currentLanguage === "pirate" ? "en" : currentLanguage;
+  return currentLanguage === "pirate" ? capabilities.en.map(toPirate) : capabilities[base];
+}
 
-  document.documentElement.lang = language;
+function setLanguage(language) {
+  currentLanguage = language;
+  const isPirate = language === "pirate";
+  const base = isPirate ? "en" : language;
+  const isEnglish = base === "en";
+
+  document.documentElement.lang = base;
   document.title = isEnglish
     ? "Ayuningtyas Maarif — Portfolio"
     : "Ayuningtyas Maarif — Portofolio";
 
   translatedElements.forEach((element) => {
-    const text = element.dataset[language];
-    element.textContent = pirateMode ? toPirate(text) : text;
+    const text = element.dataset[base];
+    element.textContent = isPirate ? toPirate(text) : text;
   });
 
   languageToggle.classList.remove("flipping");
   void languageToggle.offsetWidth;
   languageToggle.classList.add("flipping");
   languageToggle.querySelector(".flag").src = flags[language];
-  languageToggle.setAttribute("aria-label", languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
+  languageToggle.setAttribute("aria-label", isPirate
+    ? "Ganti bahasa / Change language"
+    : languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
-  rotatingCapability.textContent = capabilities[currentLanguage][capabilityIndex];
+  rotatingCapability.textContent = caps()[capabilityIndex];
   const menuOpen = menuToggle.getAttribute("aria-expanded") === "true";
   menuToggle.setAttribute("aria-label", menuOpen
     ? (isEnglish ? "Close menu" : "Tutup menu")
@@ -65,10 +75,23 @@ function setLanguage(language) {
   localStorage.setItem("portfolio-language", language);
 }
 
-languageToggle.addEventListener("click", () => setLanguage(currentLanguage === "id" ? "en" : "id"));
+// Flag cycles through unlocked languages; 5 rapid clicks unlock Pirate Speak
+let flagClicks = 0, flagTimer;
+languageToggle.addEventListener("click", () => {
+  flagClicks++;
+  clearTimeout(flagTimer);
+  flagTimer = setTimeout(() => (flagClicks = 0), 800);
+  if (flagClicks >= 5 && !cycle.includes("pirate")) {
+    flagClicks = 0;
+    cycle.push("pirate");
+    confetti();
+    setLanguage("pirate");
+    return;
+  }
+  const next = cycle[(cycle.indexOf(currentLanguage) + 1) % cycle.length];
+  setLanguage(next);
+});
 
-// Easter egg: rapid-click the flag 5x → Pirate Speak (Minecraft-style)
-let pirateMode = false;
 const pirateWords = {
   my: "me", "i'm": "I be", im: "I be", is: "be", are: "be", am: "be",
   you: "ye", your: "yer", "you're": "ye be", for: "fer", of: "o'",
@@ -83,18 +106,6 @@ function toPirate(text) {
     return /^[A-Z]/.test(w) ? hit.charAt(0).toUpperCase() + hit.slice(1) : hit;
   }).replace(/\.(\s|$)/g, ", arr!$1");
 }
-let flagClicks = 0, flagTimer;
-languageToggle.addEventListener("click", () => {
-  flagClicks++;
-  clearTimeout(flagTimer);
-  flagTimer = setTimeout(() => (flagClicks = 0), 800);
-  if (flagClicks >= 5) {
-    flagClicks = 0;
-    pirateMode = !pirateMode;
-    confetti();
-    setLanguage(currentLanguage);
-  }
-});
 
 function setMenu(open) {
   document.body.classList.toggle("menu-open", open);
@@ -182,8 +193,8 @@ updateScrollProgress();
 function rotateCapability() {
   rotatingCapability.classList.add("is-changing");
   window.setTimeout(() => {
-    capabilityIndex = (capabilityIndex + 1) % capabilities[currentLanguage].length;
-    rotatingCapability.textContent = capabilities[currentLanguage][capabilityIndex];
+    capabilityIndex = (capabilityIndex + 1) % caps().length;
+    rotatingCapability.textContent = caps()[capabilityIndex];
     rotatingCapability.classList.remove("is-changing");
   }, 250);
 }

@@ -93,20 +93,26 @@ nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); transform
 .menu-toggle { display: none; width: 2.5rem; height: 2.5rem; padding: .65rem; border: 0; background: transparent; cursor: pointer; }
 .menu-toggle span { display: block; width: 100%; height: 1px; margin: .32rem 0; background: var(--ink); transition: transform .3s ease; }
 .language-switch { display: flex; justify-content: flex-end; }
-.language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; transition: transform .2s ease; }
-.language-flag:hover { transform: scale(1.18) rotate(-6deg); }
+.language-flag { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: transform .2s ease; }
 .language-flag:active { transform: scale(.92); }
 .language-flag .flag { display: block; width: 22px; height: 22px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,.12); transition: transform .35s ease; }
 .language-flag.flipping .flag { animation: flag-flip .35s ease; }
 @keyframes flag-flip { 50% { transform: rotateY(90deg) scale(.8); } }
 
+#hero-title, .portrait-placeholder { touch-action: manipulation; }
+
 /* Site-wide micro-interactions */
 nav a, .text-link, .menu-toggle, summary, .research-link, .featured-research-link { transition: transform .2s ease, opacity .2s ease; }
-nav a:hover, .text-link:hover { transform: translateY(-2px); }
 .text-link:active { transform: translateY(0) scale(.97); }
 .sales-fact, .expertise-list > div, .work-list article, .featured-work, .experience-item { transition: transform .25s ease, box-shadow .25s ease; }
-.sales-fact:hover, .expertise-list > div:hover, .work-list article:hover, .featured-work:hover { transform: translateY(-4px); }
-summary:hover { transform: translateX(3px); }
+
+/* Hover lifts only on real pointers — avoids stuck states on touch */
+@media (hover: hover) {
+  .language-flag:hover { transform: scale(1.18) rotate(-6deg); }
+  nav a:hover, .text-link:hover { transform: translateY(-2px); }
+  .sales-fact:hover, .expertise-list > div:hover, .work-list article:hover, .featured-work:hover { transform: translateY(-4px); }
+  summary:hover { transform: translateX(3px); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .language-flag, .language-flag .flag, nav a, .text-link, .menu-toggle, summary,
@@ -355,7 +361,7 @@ footer p { margin: 0; }
   .menu-open .site-header { background: var(--paper); }
   .site-header nav a { width: 100%; padding: 1rem 0; border-bottom: 1px solid var(--line); font-family: var(--serif); font-size: clamp(2rem, 10vw, 3rem); font-weight: normal; letter-spacing: -.04em; text-transform: none; }
   .site-header nav a::after { display: none; }
-  .language-switch { position: relative; z-index: 2; grid-column: 2; grid-row: 1; align-items: center; height: 1.9rem; margin-right: .45rem; padding: 0 .7rem; border-radius: 2rem; background: var(--paper-dark); font-size: .62rem; }
+  .language-switch { position: relative; z-index: 2; grid-column: 2; grid-row: 1; align-items: center; margin-right: .2rem; border-radius: 2rem; background: transparent; font-size: .62rem; }
   .menu-open { overflow: hidden; }
   .hero { display: flex; flex-direction: column; min-height: auto; padding-top: 8rem; }
   .hero::before, .hero-side-note { display: none; }
@@ -531,8 +537,12 @@ footer p { margin: 0; }
 }
 body.party { animation: party-hue 4s linear infinite; }
 @keyframes party-hue { to { filter: hue-rotate(360deg); } }
-.portrait-placeholder.spin { opacity: 1; animation: portrait-spin .8s cubic-bezier(.4,0,.2,1); }
-@keyframes portrait-spin { to { transform: rotate(360deg) scale(1); } 50% { transform: rotate(180deg) scale(.88); } }
+.portrait-placeholder.spin { opacity: 1; animation: portrait-spin .7s ease-in-out; }
+@keyframes portrait-spin {
+  0% { transform: perspective(900px) rotateY(0); }
+  50% { transform: perspective(900px) rotateY(180deg) scale(1.03); }
+  100% { transform: perspective(900px) rotateY(360deg); }
+}
 @media (prefers-reduced-motion: reduce) {
   .confetti { display: none; }
   body.party, .portrait-placeholder.spin { animation: none; }
