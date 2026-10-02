@@ -10,7 +10,7 @@
   --pad: clamp(1.25rem, 4vw, 4.5rem);
 }
 
-* { box-sizing: border-box; }
+* { box-sizing: border-box; caret-color: transparent; }
 html { scroll-behavior: smooth; scroll-padding-top: 6rem; }
 body {
   margin: 0;
@@ -96,7 +96,7 @@ nav a:hover::after, nav a:focus-visible::after { transform: scaleX(1); transform
 .language-flag { padding: 0; border: 0; background: none; cursor: pointer; line-height: 0; transition: transform .2s ease; }
 .language-flag:hover { transform: scale(1.18) rotate(-6deg); }
 .language-flag:active { transform: scale(.92); }
-.language-flag .flag { display: block; width: 24px; height: 16px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0,0,0,.08); transition: transform .35s ease; }
+.language-flag .flag { display: block; width: 22px; height: 22px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 1px rgba(0,0,0,.12); transition: transform .35s ease; }
 .language-flag.flipping .flag { animation: flag-flip .35s ease; }
 @keyframes flag-flip { 50% { transform: rotateY(90deg) scale(.8); } }
 
