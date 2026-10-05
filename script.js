@@ -8,6 +8,7 @@ const salesFacts = document.querySelectorAll(".sales-fact");
 const rotatingCapability = document.getElementById("rotating-capability");
 const menuToggle = document.querySelector(".menu-toggle");
 const primaryNavigation = document.getElementById("primary-navigation");
+const capabilityToggle = document.getElementById("capability-toggle");
 let currentLanguage = "id";
 let capabilityIndex = 0;
 const capabilities = {
@@ -67,12 +68,14 @@ function setLanguage(language) {
     : languageToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
   rotatingCapability.textContent = caps()[capabilityIndex];
+  primaryNavigation.setAttribute("aria-label", isEnglish ? "Primary navigation" : "Navigasi utama");
+  updateCapabilityControl();
   const menuOpen = menuToggle.getAttribute("aria-expanded") === "true";
   menuToggle.setAttribute("aria-label", menuOpen
     ? (isEnglish ? "Close menu" : "Tutup menu")
     : menuToggle.dataset[`label${isEnglish ? "En" : "Id"}`]);
 
-  localStorage.setItem("portfolio-language", language);
+  try { localStorage.setItem("portfolio-language", language); } catch { /* Language switching still works without storage. */ }
 }
 
 // Flag cycles through unlocked languages; 5 rapid clicks unlock Pirate Speak
@@ -109,11 +112,17 @@ function toPirate(text) {
 
 function setMenu(open) {
   document.body.classList.toggle("menu-open", open);
+  document.getElementById("main").inert = open;
+  document.querySelector("footer").inert = open;
   menuToggle.setAttribute("aria-expanded", String(open));
-  const labelKey = currentLanguage === "en" ? "En" : "Id";
+  const isEnglish = currentLanguage !== "id";
+  const labelKey = isEnglish ? "En" : "Id";
   menuToggle.setAttribute("aria-label", open
-    ? (currentLanguage === "en" ? "Close menu" : "Tutup menu")
+    ? (isEnglish ? "Close menu" : "Tutup menu")
     : menuToggle.dataset[`label${labelKey}`]);
+  if (open) requestAnimationFrame(() => {
+    if (menuToggle.getAttribute("aria-expanded") === "true") primaryNavigation.querySelector("a").focus();
+  });
 }
 
 menuToggle.addEventListener("click", () => {
@@ -121,11 +130,26 @@ menuToggle.addEventListener("click", () => {
 });
 
 primaryNavigation.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => setMenu(false));
+  link.addEventListener("click", () => {
+    const wasOpen = menuToggle.getAttribute("aria-expanded") === "true";
+    setMenu(false);
+    if (wasOpen) {
+      const target = document.querySelector(link.hash);
+      target.setAttribute("tabindex", "-1");
+      target.focus({ preventScroll: true });
+    }
+  });
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") setMenu(false);
+  if (menuToggle.getAttribute("aria-expanded") !== "true") return;
+  if (event.key === "Escape") { setMenu(false); menuToggle.focus(); }
+  if (event.key === "Tab") {
+    const controls = [...primaryNavigation.querySelectorAll("a"), menuToggle, languageToggle];
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
 });
 
 window.addEventListener("resize", () => {
@@ -175,6 +199,11 @@ const revealObserver = new IntersectionObserver((entries, observer) => {
 }, { rootMargin: "0px 0px -10%", threshold: 0.08 });
 
 document.querySelectorAll("[data-reveal]").forEach((element) => revealObserver.observe(element));
+document.addEventListener("focusin", (event) => {
+  for (let element = event.target; element instanceof Element; element = element.parentElement) {
+    if (element.hasAttribute("data-reveal")) element.classList.add("is-visible");
+  }
+});
 
 let scrollFrame;
 function updateScrollProgress() {
@@ -190,25 +219,50 @@ window.addEventListener("scroll", () => {
 
 updateScrollProgress();
 
+let capabilityTimer, capabilityTimeout;
+let capabilityPaused = false;
+const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function updateCapabilityControl() {
+  const paused = capabilityPaused || motionPreference.matches;
+  const isEnglish = currentLanguage !== "id";
+  capabilityToggle.setAttribute("aria-pressed", String(paused));
+  capabilityToggle.setAttribute("aria-label", paused
+    ? (isEnglish ? "Resume capability rotation" : "Lanjutkan rotasi keahlian")
+    : (isEnglish ? "Pause capability rotation" : "Jeda rotasi keahlian"));
+  capabilityToggle.disabled = motionPreference.matches;
+  capabilityToggle.querySelector("use").setAttribute("href", paused ? "#icon-play" : "#icon-pause");
+}
+
 function rotateCapability() {
   rotatingCapability.classList.add("is-changing");
-  window.setTimeout(() => {
+  capabilityTimeout = window.setTimeout(() => {
     capabilityIndex = (capabilityIndex + 1) % caps().length;
     rotatingCapability.textContent = caps()[capabilityIndex];
     rotatingCapability.classList.remove("is-changing");
   }, 250);
 }
 
-if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  window.setInterval(rotateCapability, 2400);
+function syncCapabilityRotation() {
+  window.clearInterval(capabilityTimer);
+  window.clearTimeout(capabilityTimeout);
+  rotatingCapability.classList.remove("is-changing");
+  if (!motionPreference.matches && !capabilityPaused && !document.hidden) capabilityTimer = window.setInterval(rotateCapability, 2400);
+  updateCapabilityControl();
 }
+capabilityToggle.addEventListener("click", () => { capabilityPaused = !capabilityPaused; syncCapabilityRotation(); });
+motionPreference.addEventListener("change", syncCapabilityRotation);
+document.addEventListener("visibilitychange", syncCapabilityRotation);
+syncCapabilityRotation();
 
 window.addEventListener("scroll", () => {
   document.body.classList.toggle("scrolled", window.scrollY > 24);
 }, { passive: true });
 
-const savedLanguage = localStorage.getItem("portfolio-language");
-if (savedLanguage === "en") setLanguage("en");
+try {
+  const savedLanguage = localStorage.getItem("portfolio-language");
+  if (savedLanguage === "en") setLanguage("en");
+} catch { /* Keep the default language when storage is blocked. */ }
 
 document.getElementById("year").textContent = new Date().getFullYear();
 

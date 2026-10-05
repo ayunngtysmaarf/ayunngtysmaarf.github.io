@@ -127,7 +127,7 @@ The portfolio highlights measurable outcomes such as monthly device sales, ticke
 
 ## Bilingual System
 
-Indonesian is the default language. Visitors can switch to English using the `ID / EN` control.
+Indonesian is the default language. Visitors can switch to English using the flag control. Language switching continues to work when browser storage is unavailable.
 
 The selected language is saved in the browser:
 
@@ -182,6 +182,8 @@ Motion is intentionally restrained and supports the content hierarchy:
 - Reading progress at the top of the viewport
 - Subtle hover movement on desktop
 - Rotating expertise text
+
+The expertise rotation has a pause/resume control and stops when the page is hidden or reduced motion is requested.
 
 Users who request reduced motion receive the content without entrance animations or animated scrolling.
 
@@ -242,12 +244,15 @@ Contact links are located near the bottom of `index.html`. Update the visible te
 The project can be checked with the following commands:
 
 ```bash
+npm test
 npx --yes html-validate@8.24.0 index.html
 node --check script.js
 git diff --check
 ```
 
 The pinned HTML validator version supports the Node.js version used during development.
+
+`npm test` uses the installed Puppeteer development dependency to check both languages at 320–1440 px, body text sizes, overflow, keyboard navigation, reduced motion, contrast, blocked storage, and resume links. It does not add any browser dependency to the deployed website.
 
 Responsive behavior should also be reviewed in browser developer tools at common widths such as:
 
